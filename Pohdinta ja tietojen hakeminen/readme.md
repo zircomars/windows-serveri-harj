@@ -1,0 +1,1 @@
+# pohdintoja ja tietojen hakemista
