@@ -12,3 +12,11 @@
 - https://www.ijnrd.org/papers/IJNRD2403429.pdf
 
 
+---
+## GPO mahdollisia harjoituksia
+
+Tästä lisä harjoituksia, että mistä voisi harjoitella:
+- https://infosec.co.il/wp-content/uploads/2020/06/05-Implementing-Group-Policy.pdf
+- https://www.scribd.com/document/633562027/Group-Policy-Management
+- https://hartiga.de/windows-server/group-policies-foundation/
+- https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview
