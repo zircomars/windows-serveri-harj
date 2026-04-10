@@ -1,6 +1,6 @@
 # Powershell komentoja
 
-Tämä on vain pieni listaus koskien powershell hyödyllisiä komentoja, mitä tekee testinsä windows työasemalla ja serverissä normaalisti. Näitä ei tapahdu joka päivä, mutta pieni listuas hyvänsä
+Tämä on vain pieni listaus koskien powershell hyödyllisiä komentoja, mitä tekee testinsä windows työasemalla ja serverissä normaalisti. Näitä ei tapahdu joka päivä, mutta pieni listuas hyvänsä ja tässä on pientä dejavu toistoja.
 
 ARP‑taulukko (Address Resolution Protocol) on tietokoneen ylläpitämä lista, joka kertoo, mikä IP‑osoite vastaa mitä MAC‑osoitetta paikallisessa verkossa. 
 - selvittää, mitä laitteita on ollut lähiverkossa
@@ -209,21 +209,212 @@ Näyttää WiFi-verkon salasanan.
 $netsh wlan show profile name="<SSID>" key=clear
 ```
 
+---
+---
 
+# Windows Server / Active Directory ‑vianmääritykseen liittyvät PowerShell‑komennot
 
+Tarkistaa, onko koneen AD‑luottosuhde kunnossa (secure channel).
+```
+$Test-ComputerSecureChannel
+```
 
+Listaa kaikki domain controllerit.
+```
+$Get-ADDomainController -Filter *
+```
 
+Näyttää yksityiskohtaiset tiedot tietystä domain controllerista.
+```
+$Get-ADDomainController -Identity <DCName>
+```
 
+Testaa yhteyden domain controlleriin (DNS, LDAP, Kerberos).
+```
+$Test-ADDomainController -Identity <DCName>
+```
 
+Näyttää AD‑metsän tiedot.
+```
+$Get-ADForest
+```
 
+Näyttää AD‑domainin tiedot.
+```
+$Get-ADDomain
+```
 
+Näyttää AD‑replikointipartnerit ja viimeisimmät replikoinnit.
+```
+$Get-ADReplicationPartnerMetadata -Target <DCName>
+```
 
+Näyttää AD‑replikointitilastot ja virheet.
+```
+$Get-ADReplicationFailure -Target <DCName>
+```
 
+Näyttää kaikki FSMO‑roolien haltijat.
+```
+$Get-ADDomain | Select-Object InfrastructureMaster, RIDMaster, PDCEmulator
+$Get-ADForest | Select-Object SchemaMaster, DomainNamingMaster
+```
 
+Testaa AD‑replikoinnin tilan koko domainissa.
+```
+$Get-ADReplicationConnection -Filter *
+```
 
+Näyttää AD‑sivustot ja aliverkot.
+```
+$Get-ADReplicationSite -Filter *
+$Get-ADReplicationSubnet -Filter *
+```
 
+Näyttää käyttäjän AD‑tiedot.
+```
+$Get-ADUser -Identity <username> -Properties *
+```
 
+Näyttää ryhmän AD‑tiedot.
+```
+$Get-ADGroup -Identity <groupname> -Properties *
+```
 
+Näyttää käyttäjän ryhmäjäsenyydet.
+```
+$Get-ADPrincipalGroupMembership <username>
+```
+
+Näyttää ryhmän jäsenet.
+```
+$Get-ADGroupMember -Identity <groupname>
+```
+
+Etsii käyttäjän, joka on lukittu ulos AD:stä.
+```
+$Search-ADAccount -LockedOut
+```
+
+Etsii käyttäjän, jonka salasana on vanhentunut.
+```
+$Search-ADAccount -PasswordExpired
+```
+
+Etsii käyttäjän, jonka tili on disabloitu.
+```
+$Search-ADAccount -AccountDisabled
+```
+
+Näyttää kaikki koneobjektit domainissa.
+```
+$Get-ADComputer -Filter * -Properties *
+```
+
+Näyttää tietyn koneen AD‑attribuutit.
+```
+$Get-ADComputer -Identity <hostname> -Properties *
+```
+
+Testaa Kerberos‑lipun saamisen (hyödyllinen DC‑ongelmiin).
+```
+$klist
+```
+
+Tyhjentää Kerberos‑liput.
+```
+$klist purge
+```
+
+Testaa DNS‑SRV‑tietueet domain controllerille.
+```
+$Resolve-DnsName -Type SRV _ldap._tcp.dc._msdcs.<domain>
+```
+
+Testaa AD‑sisäisen DNS‑palvelun toimivuuden.
+```
+$Resolve-DnsName <domain> -Server <DC-IP>
+```
+
+Näyttää kaikki GPO:t domainissa.
+```
+$Get-GPO -All
+```
+
+Näyttää GPO‑linkitykset OU:lle.
+```
+$Get-GPInheritance -Target <OU DN>
+```
+
+Päivittää ryhmäkäytännöt pakotetusti.
+```
+$gpupdate /force
+```
+
+Näyttää GPO‑tulokset (RSoP) koneelle tai käyttäjälle.
+```
+$gpresult /r
+```
+
+Näyttää AD‑terveystarkastuksen (DC‑diag PowerShell‑versio).
+```
+$Get-ADReplicationQueueOperation
+```
+
+Näyttää AD‑objektien replikointiviiveet.
+```
+$Get-ADReplicationUpToDatenessVectorTable -Target <DCName> -Partition * | Sort-Object -Property USN
+```
+
+Näyttää domain controllerin roolit ja tilan.
+```
+$Get-ADDomainController -Filter * | Select-Object Name,IPv4Address,IsGlobalCatalog,OperationMasterRoles,Site
+```
+
+Näyttää AD‑tietokannan koon ja polun.
+```
+$Get-Item "C:\Windows\NTDS\ntds.dit"
+```
+
+Näyttää AD‑lokit (Directory Service log).
+```
+$Get-EventLog -LogName "Directory Service" -Newest 50
+```
+
+Näyttää DNS‑palvelimen lokit (jos rooli asennettu).
+```
+$Get-EventLog -LogName "DNS Server" -Newest 50
+```
+
+Näyttää DHCP‑palvelimen tilan (jos rooli asennettu).
+```
+$Get-DhcpServerv4Scope
+```
+
+Näyttää Hyper‑V‑virtuaalikoneet (jos rooli asennettu).
+```
+$Get-VM
+```
+
+Näyttää AD‑sertifikaattipalvelimen CA‑tiedot (jos rooli asennettu).
+```
+$Get-CertificationAuthority
+```
+
+Näyttää AD‑objektien replikointiongelmat koko domainissa.
+```
+$repadmin /replsummary
+```
+
+Näyttää domain controllerin replikointivirheet.
+```
+$repadmin /showrepl <DCName>
+```
+
+Näyttää AD‑sivustot ja reititykset.
+```
+$repadmin /showutdvec <DCName> <NamingContext>
+```
 
 
 
